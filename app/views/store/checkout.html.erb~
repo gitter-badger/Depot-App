@@ -22,8 +22,7 @@
          <%= form.label :pay_type, "Pay with:" %>
          <%=
             form.select :pay_type,
-                       #  Order::PAYMENT_TYPES,
-                        Order::PAYMENT_TYPES.find_all.collect {|disp , value|  value ]},
+                        Order::PAYMENT_TYPES,
                         :prompt => "Select a payment method"  %>
        </div>
        <%= submit_tag "Place Order" , :class => "submit" %>

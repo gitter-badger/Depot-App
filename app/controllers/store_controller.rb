@@ -1,6 +1,26 @@
 class StoreController < ApplicationController
   before_filter :find_cart , :except => :empty_cart  
 
+  def paypal_url(return_url)
+    values = {
+      :business =>  'sidpig_1278847745_biz@hotmail.com' ,
+      :cmd => '_cart' ,
+      :upload => 1 ,
+      :return => return_url ,
+      :invoice => id 
+    }
+    cart_items.each_with_index do |item ,index| 
+      values.merge!({
+        "amount_#{index+1}" => item.unit_price ,
+        "item_name_#{index+1}" => item.product.name ,
+        "item_number_#{index+1}" => item.id ,
+        "quantity_#{index+1}" => item.quantity 
+      })
+    end
+    "https://www.sandbox.paypal.com/cgi-bin/webscr?"+values.map {|k,v| "#{k}=#{v}"}.join("&")
+  end  
+   
+
   def index
      @products=Product.find_products_for_sale
    #  @cart = find_cart
@@ -58,7 +78,6 @@ class StoreController < ApplicationController
 
   def find_cart
    @cart = (session[:cart] ||= Cart.new)   
-
 
 # unless session[:cart]
     #   session[:cart] = Cart.new
